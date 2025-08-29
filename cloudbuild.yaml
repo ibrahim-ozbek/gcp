@@ -1,0 +1,29 @@
+steps:
+  # 1. Docker image build
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', 'us-east1-docker.pkg.dev/amandeep-singh5/test/hello-world',
+      '.'
+    ]
+
+  # 2. Push Image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push',
+      'us-east1-docker.pkg.dev/amandeep-singh5/test/hello-world'
+    ]
+
+  # 3. Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: [
+      'run', 'deploy', 'SERVICE_NAME',
+      '--image', 'us-east1-docker.pkg.dev/amandeep-singh5/test/hello-world',
+      '--region', 'us-east1',
+      '--platform', 'managed',
+      '--allow-unauthenticated'
+    ]
+
+images:
+  - 'us-east1-docker.pkg.dev/amandeep-singh5/test/hello-world'
